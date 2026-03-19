@@ -32,7 +32,7 @@ Este proyecto utiliza Machine Learning para predecir el precio de alquiler de bi
     * **Windows:**
         ```bash
         python -m venv venv
-        .\venv\Scripts\activate
+        source venv/Scripts/activate
         ```
     * **Mac/Linux:**
         ```bash
