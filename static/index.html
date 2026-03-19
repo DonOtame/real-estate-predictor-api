@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictor Inmobiliario Ecuador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white shadow-xl rounded-2xl p-8 max-w-lg w-full border border-slate-100">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800 tracking-tight">🏠 Alquiler Predictor</h1>
+            <p class="text-slate-500 mt-2 text-sm text-pretty">Estima el precio de alquiler en Ecuador usando Inteligencia Artificial.</p>
+        </div>
+
+        <form id="calcForm" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Provincia</label>
+                    <input type="text" id="provincia" placeholder="Ej: Pichincha" required
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Ciudad/Sector</label>
+                    <input type="text" id="lugar" placeholder="Ej: Quito" required
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Área Total (m²)</label>
+                <input type="number" id="area" placeholder="Ej: 100" required
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center text-pretty">Habit.</label>
+                    <input type="number" id="dormitorios" value="2" required
+                        class="w-full px-4 py-2 border rounded-lg text-center outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center text-pretty">Baños</label>
+                    <input type="number" id="banos" value="1" required
+                        class="w-full px-4 py-2 border rounded-lg text-center outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1 text-center text-pretty">Garajes</label>
+                    <input type="number" id="garages" value="1" required
+                        class="w-full px-4 py-2 border rounded-lg text-center outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <button type="submit" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-lg shadow-blue-200 transition-all transform active:scale-95">
+                Calcular Estimación
+            </button>
+        </form>
+
+        <div id="resultadoContainer" class="hidden mt-8 p-4 bg-blue-50 border border-blue-100 rounded-xl text-center">
+            <span class="text-blue-600 text-sm font-medium">Precio Estimado Mensual</span>
+            <div id="resultado" class="text-3xl font-extrabold text-blue-900 mt-1 italic"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calcForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const resContainer = document.getElementById('resultadoContainer');
+            
+            btn.innerText = "Calculando...";
+            btn.disabled = true;
+
+            const data = {
+                provincia: document.getElementById('provincia').value,
+                lugar: document.getElementById('lugar').value,
+                area: parseFloat(document.getElementById('area').value),
+                num_dormitorios: parseInt(document.getElementById('dormitorios').value),
+                num_banos: parseInt(document.getElementById('banos').value),
+                num_garages: parseInt(document.getElementById('garages').value)
+            };
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const res = await response.json();
+                
+                resContainer.classList.remove('hidden');
+                document.getElementById('resultado').innerText = `$${res.prediction.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+            } catch (err) {
+                alert("Error al conectar con la API");
+            } finally {
+                btn.innerText = "Calcular Estimación";
+                btn.disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 import joblib
 import pandas as pd
@@ -8,6 +10,16 @@ app = FastAPI(
     title="Real Estate Predictor API",
     description="API para predecir precios de alquiler en Ecuador basándose en un modelo de Random Forest."
 )
+
+script_dir = os.path.dirname(__file__)
+static_path = os.path.join(script_dir, "..", "static")
+
+app.mount("/static", StaticFiles(directory=static_path), name="static")
+
+
+@app.get("/")
+async def read_index():
+    return FileResponse(os.path.join(static_path, 'index.html'))
 
 MODEL_PATH = os.path.join(os.path.dirname(
     __file__), "..", "models", "modelo_rf_alquileres.pkl")
@@ -39,8 +51,3 @@ def predict(data: PredictionInput):
 
     prediction = model.predict(input_df)[0]
     return {"prediction": round(float(prediction), 2)}
-
-
-@app.get("/")
-def home():
-    return {"message": "API de Alquileres Ecuador"}
