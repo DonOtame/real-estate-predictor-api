@@ -28,18 +28,29 @@ Este proyecto utiliza Machine Learning para predecir el precio de alquiler de bi
     cd real-estate-predictor-api
     ```
 
-2.  **Crear y activar entorno virtual (venv):**
-    * **Windows:**
-        ```bash
-        python -m venv venv
-        source venv/Scripts/activate
-        ```
-    * **Mac/Linux:**
-        ```bash
-        python3 -m venv venv
-        source venv/bin/activate
-        ```
+2. **Crear y activar entorno virtual (venv):**
 
+* **Windows:**
+    ```bash
+    # 1. Crear el entorno
+    python -m venv venv
+
+    # 2. Activar (Git Bash):
+    source venv/Scripts/activate
+
+    # 2. Activar (CMD):
+    .\venv\Scripts\activate.bat
+    ```
+
+* **Mac / Linux:**
+    ```bash
+    # 1. Crear el entorno
+    python3 -m venv venv
+
+    # 2. Activar:
+    source venv/bin/activate
+    ```
+    
 3.  **Instalar dependencias:**
     ```bash
     pip install -r requirements.txt

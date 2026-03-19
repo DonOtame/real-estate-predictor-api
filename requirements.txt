@@ -6,4 +6,3 @@ seaborn
 fastapi
 uvicorn
 joblib
-jupyter
