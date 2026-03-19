@@ -11,18 +11,30 @@ app = FastAPI(
     description="API para predecir precios de alquiler en Ecuador basándose en un modelo de Random Forest."
 )
 
-script_dir = os.path.dirname(__file__)
-static_path = os.path.join(script_dir, "..", "static")
+current_file_path = os.path.abspath(__file__)
+api_dir = os.path.dirname(current_file_path)
 
-app.mount("/static", StaticFiles(directory=static_path), name="static")
+root_dir = os.path.dirname(api_dir)
+static_path = os.path.join(root_dir, "static")
+
+if os.path.exists(static_path):
+    app.mount("/static", StaticFiles(directory=static_path), name="static")
+else:
+    print(f"Error: No se encontró la carpeta static en {static_path}")
 
 
 @app.get("/")
 async def read_index():
-    return FileResponse(os.path.join(static_path, 'index.html'))
+    index_file = os.path.join(static_path, 'index.html')
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
+    return {"error": "index.html no encontrado", "path_buscado": index_file}
+
 
 MODEL_PATH = os.path.join(os.path.dirname(
     __file__), "..", "models", "modelo_rf_alquileres.pkl")
+
+
 model = joblib.load(MODEL_PATH)
 
 
